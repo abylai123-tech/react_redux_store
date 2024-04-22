@@ -47,6 +47,7 @@ function App() {
           <Route path="/stocks" element={<Stocks />} />
           <Route path="/cart" element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} />} />
           <Route path="/catalog" element={<Catalog/>}/>
+          <Route path='/catalog/:category' element={<Catalog />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>

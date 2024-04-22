@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { data } from '../data/products.js';
-import { useSelector } from 'react-redux';
+import { useParams, Link } from 'react-router-dom';
+import '../components/styles/Catalog.css';
 
 export const Catalog = () => {
+  const { category } = useParams();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,7 @@ export const Catalog = () => {
       try {
         const response = await fetch('https://fakestoreapi.com/products');
         const data = await response.json();
-        setProducts(data.slice(0, 4)); 
+        setProducts(data);
       } catch (error) {
         setError(error);
       } finally {
@@ -43,6 +44,10 @@ export const Catalog = () => {
     };
     fetchProducts();
   }, []);
+
+  const filteredProducts = category
+    ? products.filter(product => product.category === category)
+    : products;
 
   return (
     <div className="catalog_container">
@@ -55,25 +60,29 @@ export const Catalog = () => {
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : (
-          categories.map((category, index) => (
-            <div key={index} className={`category ${category}`}>
-              <span>{category}</span>
-              <div className="product-list">
-                {products.map((product, index) => (
-                  <div key={index} className="product">
-                    <div className="product-container">
-                      <img src={product.image} alt={product.title} />
-                      <div className="product-info">
-                        <h3>{product.title}</h3>
-                        <p>{product.description}</p>
-                        <p>Price: {product.price}</p>
-                      </div>
+          <div>
+            <div className="category_links">
+              {categories.map((cat, index) => (
+                <Link key={index} to={`/catalog/${cat}`} className="category_link">
+                  <span>{cat}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="product_list">
+              {filteredProducts.map((product, idx) => (
+                <div key={idx} className="product">
+                  <div className="product-container">
+                    <img src={product.image} alt={product.title} />
+                    <div className="product-info">
+                      <h3>{product.title}</h3>
+                      <p>{product.description}</p>
+                      <p>Price: {product.price}₽</p> 
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ))
+          </div>
         )}
       </div>
     </div>
